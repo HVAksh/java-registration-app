@@ -4,11 +4,11 @@ pipeline{
         maven 'maven'
     }
     environment {
-        APP_NAME = "jave-registration-app"
-        RELEASE = "1.0.0"
-        DOCKER_USER = "hvaksh"
-        IMAGE_NAME = "${DOCKER_USER}"+"/"+"${APP_NAME}"
-        IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
+        APP_NAME = 'jave-registration-app'
+        RELEASE = '1.0.0'
+        DOCKER_USER = 'hvaksh'
+        IMAGE_NAME = '${DOCKER_USER}'+'/'+'${APP_NAME}'
+        IMAGE_TAG = '${RELEASE}-${BUILD_NUMBER}'
     }
     stages{
         stage('clean workspace') {
@@ -59,39 +59,39 @@ pipeline{
         stage('artifactory configuration') {
             steps {
                 rtServer (
-                    id: "jfrog"
-                    url: "http://192.168.147.128:8082/artifactory"
-                    credentialsId: "jfrog"
+                    id: 'jfrog-server'
+                    url: 'http://192.168.147.128:8082/artifactory'
+                    credentialsId: 'jfrog'
                 )
                 rtMavenDeployer (
-                    id: "MAVEN_DEPLOYER",
-                    serverId: "jfrog",
-                    releaseRepo: "libs-release-local",
-                    snapshotRepo: "libs-snapshot-local"
+                    id: 'MAVEN_DEPLOYER',
+                    serverId: 'jfrog-server',
+                    releaseRepo: 'libs-release-local',
+                    snapshotRepo: 'libs-snapshot-local'
                 )
                 rtMavenResolver (
-                    id: "MAVEN_RESOLVER",
-                    serverId: "jfrog",
-                    releaseRepo: "libs-release",
-                    snapshotRepo: "libs-snapshot"
+                    id: 'MAVEN_RESOLVER',
+                    serverId: 'jfrog-server',
+                    releaseRepo: 'libs-release',
+                    snapshotRepo: 'libs-snapshot'
                 )
             }
         }
         stage('Deploy artifacts') {
             steps {
                 rtMavenRun (
-                    tool: "maven", 
+                    tool: 'maven', 
                     pom: 'webapp/pom.xml',
                     goals: 'clean install',
-                    deployerId: "MAVEN_DEPLOYER",
-                    resolverId: "MAVEN_RESOLVER"
+                    deployerId: 'MAVEN_DEPLOYER',
+                    resolverId: 'MAVEN_RESOLVER'
                 )
             }
         }
         stage('build publish info') {
             steps {
                 rtPublishBuildInfo (
-                    serverId: "jfrog"
+                    serverId: 'jfrog-server'
                 )
             }
         }
