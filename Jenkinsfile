@@ -1,102 +1,94 @@
-pipeline{
+pipeline {
     agent any
-    tools{
+    tools {
         maven 'maven'
     }
     environment {
         SCANNER_HOME = tool 'sonar-scanner'
-        APP_NAME = 'jave-registration-app'
-        RELEASE = '1.0.0'
-        DOCKER_USER = 'hvaksh'
-        IMAGE_NAME = '${DOCKER_USER}'+'/'+'${APP_NAME}'
-        IMAGE_TAG = '${RELEASE}-${BUILD_NUMBER}'
+        APP_NAME = "java-registration-app"
+        RELEASE = "1.0.0"
+        DOCKER_USER = "hvaksh"
+        DOCKER_PASS = 'dockerhub'
+        IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
+        IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
+	
     }
-    stages{
-        stage('clean workspace') {
+    stages {
+         stage('clean workspace') {
             steps {
                 cleanWs()
             }
-        }
-        stage('git checkout') {
+         }
+         stage('Checkout from Git') {
             steps {
                 git branch: 'main', url: 'https://github.com/HVAksh/java-registration-app.git'
             }
-        }
-        stage('unit test') {
-            steps {
-                script {
-                    sh 'mvn test'
+         }
+         stage ('Build Package')  {
+	         steps {
+                dir('webapp'){
+                sh "mvn package"
                 }
-            }
-        }
-        stage('integration test') {
+             }
+         }
+         stage ('SonarQube Analysis') {
             steps {
-                script {
-                    sh 'mvn verify -Pintegration-tests -DskipTests=true'
-                }
-            }
-        }
-        stage('static code analysis: sonarqube') {
-            steps {
-                withSonarQubeEnv('sonarqube-server') {
+              withSonarQubeEnv('SonarQube-Server') {
                 dir('webapp'){
                 sh 'mvn -U clean install sonar:sonar'
                 }
-              }
+              }  
             }
-        }
-        stage('quality gate status check: sonarqube') {
+         }
+         stage("Quality Gate") {
             steps {
                 script {
-                    waitForQualityGate abortPipeline: false, credentialsId: 'sonarqube-token'
+                    waitForQualityGate abortPipeline: false, credentialsId: 'SonarQube-Token'
                 }
             }
-        }
-        stage('mavenbuild') {
-            steps {
-                sh 'mvn clean install -DskipTests'
-            }
-        }
-        stage('artifactory configuration') {
+         }
+         stage ('Artifactory configuration') {
             steps {
                 rtServer (
-                    id: 'jfrog-server'
-                    url: http://192.168.147.128:8082/artifactory
-                    credentialsId: 'jfrog'
+                    id: "jfrog-server",
+                    url: "http://192.168.147.128:8082/artifactory",
+                    credentialsId: "jfrog"
                 )
+
                 rtMavenDeployer (
-                    id: 'MAVEN_DEPLOYER',
-                    serverId: 'jfrog-server',
-                    releaseRepo: 'libs-release-local',
-                    snapshotRepo: 'libs-snapshot-local'
+                    id: "MAVEN_DEPLOYER",
+                    serverId: "jfrog-server",
+                    releaseRepo: "libs-release-local",
+                    snapshotRepo: "libs-snapshot-local"
                 )
+
                 rtMavenResolver (
-                    id: 'MAVEN_RESOLVER',
-                    serverId: 'jfrog-server',
-                    releaseRepo: 'libs-release',
-                    snapshotRepo: 'libs-snapshot'
+                    id: "MAVEN_RESOLVER",
+                    serverId: "jfrog-server",
+                    releaseRepo: "libs-release",
+                    snapshotRepo: "libs-snapshot"
                 )
             }
-        }
-        stage('Deploy artifacts') {
+         }
+         stage ('Deploy Artifacts') {
             steps {
                 rtMavenRun (
-                    tool: 'maven', 
+                    tool: "maven", 
                     pom: 'webapp/pom.xml',
                     goals: 'clean install',
-                    deployerId: 'MAVEN_DEPLOYER',
-                    resolverId: 'MAVEN_RESOLVER'
+                    deployerId: "MAVEN_DEPLOYER",
+                    resolverId: "MAVEN_RESOLVER"
                 )
             }
-        }
-        stage('build publish info') {
+         }
+         stage ('Publish build info') {
             steps {
                 rtPublishBuildInfo (
-                    serverId: 'jfrog-server'
-                )
+                    serverId: "jfrog-server"
+             )
             }
-        }
-        tage('TRIVY FS SCAN') {
+         }
+         stage('TRIVY FS SCAN') {
             steps {
                 sh "trivy fs . > trivyfs.txt"
             }
@@ -142,6 +134,7 @@ pipeline{
                  }
              }
          }
+        
     }
     post {
       always {
@@ -150,8 +143,8 @@ pipeline{
             body: "Project: ${env.JOB_NAME}<br/>" +
                 "Build Number: ${env.BUILD_NUMBER}<br/>" +
                 "URL: ${env.BUILD_URL}<br/>",
-            to: 'ashfaque.s510@gmail.com',                              
+            to: 'akshchaudhary92@gmail.com',                              
             attachmentsPattern: 'trivyfs.txt,trivyimage.txt'
       }
     }
-}
+}    
