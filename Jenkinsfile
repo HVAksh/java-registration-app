@@ -4,6 +4,7 @@ pipeline{
         maven 'maven'
     }
     environment {
+        SCANNER_HOME = tool 'sonar-scanner'
         APP_NAME = 'jave-registration-app'
         RELEASE = '1.0.0'
         DOCKER_USER = 'hvaksh'
