@@ -33,7 +33,7 @@ pipeline {
          }
          stage ('SonarQube Analysis') {
             steps {
-              withSonarQubeEnv('SonarQube-Server') {
+              withSonarQubeEnv('sonarqube-server') {
                 dir('webapp'){
                 sh 'mvn -U clean install sonar:sonar'
                 }
@@ -43,7 +43,7 @@ pipeline {
          stage("Quality Gate") {
             steps {
                 script {
-                    waitForQualityGate abortPipeline: false, credentialsId: 'SonarQube-Token'
+                    waitForQualityGate abortPipeline: false, credentialsId: 'sonarqube-token'
                 }
             }
          }
