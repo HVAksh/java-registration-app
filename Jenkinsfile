@@ -95,41 +95,5 @@ pipeline{
                 )
             }
         }
-        stage('trivy FS scan') {
-            steps {
-                command
-            }
-        }
-        stage('Build and Push Docker Image') {
-            steps {
-                command
-            }
-        }
-        stage('Trivy Image Scan') {
-            steps {
-                command
-            }
-        }
-        stage('CleanUP artifacts') {
-            steps {
-                command
-            }
-        }
-        stage('Deploy to Kubernetes') {
-            steps {
-                command
-            }
-        }
-    }
-    post {
-        always {
-            emailext attachLog: true,
-            subject: "'${currentBuild.result}'",
-            body: "Project: ${env.JOB_NAME}<br/>" +
-                "Build Number: ${env.BUILD_NUMBER}<br/>" +
-                "URL: ${env.BUILD_URL}<br/>",
-            to: 'akshchaudhary92@gmail.com',                              
-            attachmentsPattern: 'trivyfs.txt,trivyimage.txt'
-        }
     }
 }
