@@ -2,6 +2,7 @@ pipeline {
     agent any
     
     environment{
+	SCANNER_HOME = tool 'sonar-scanner'
         APP_NAME = "java-registration-app"
         RELEASE = "1.0.0"
         DOCKER_USER = "hvaksh"
