@@ -1,9 +1,7 @@
 pipeline {
     agent any
-    tools {
-        maven 'maven'
-    }
-    environment {
+    
+    environment{
         APP_NAME = "java-registration-app"
         RELEASE = "1.0.0"
         DOCKER_USER = "hvaksh"
@@ -41,7 +39,10 @@ pipeline {
          stage("Quality Gate") {
             steps {
                 script {
-                    waitForQualityGate abortPipeline: false, credentialsId: 'sonarqube-token'
+		    def SonarQubecredentialsId = 'sonarqube-token'
+                    def call(credentialsId){
+			    waitForQualityGate abortPipeline: false, credentialsId: credentialsId
+		    }
                 }
             }
          }
@@ -118,21 +119,7 @@ pipeline {
                       sh "docker rmi ${IMAGE_NAME}:latest"
                  }
              }
-         }
-         stage('Deploy to Kubernets'){
-             steps{
-                 script{
-                      dir('Kubernetes') {
-                         kubeconfig(credentialsId: 'kubernetes', serverUrl: '') {
-                         sh 'kubectl apply -f deployment.yml'
-                         sh 'kubectl apply -f service.yml'
-                         sh 'kubectl rollout restart deployment.apps/registerapp-deployment'
-                         }   
-                      }
-                 }
-             }
-         }
-        
+         }        
     }
     post {
       always {
