@@ -4,7 +4,7 @@ pipeline {
     environment{
 	SCANNER_HOME = tool 'sonar-scanner'
         APP_NAME = "java-registration-app"
-        RELEASE = "1.0.0"
+        RELEASE = "1..0"
         DOCKER_USER = "hvaksh"
         IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
