@@ -40,7 +40,7 @@ pipeline {
             steps {
                 script {
 		    def SonarQubecredentialsId = 'sonarqube-token'{
-			    waitForQualityGate abortPipeline: false, credentialsId: sonarqube-token
+			    waitForQualityGate abortPipeline: false, credentialsId: 'sonarqube-token'
 		    }
                 }
             }
