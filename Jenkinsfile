@@ -39,9 +39,7 @@ pipeline {
          stage("Quality Gate") {
             steps {
                 script {
-		    def SonarQubecredentialsId = 'sonarqube-server'{
-			    waitForQualityGate abortPipeline: false, credentialsId: 'sonarqube-server'
-		    }
+		    waitForQualityGate abortPipeline: false, credentialsId: 'sonarqube-server'
                 }
             }
          }
