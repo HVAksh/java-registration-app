@@ -99,7 +99,7 @@ pipeline {
         stage('Trivy FS scan') {
                     when {expression {params.action == 'create'}}
             steps{
-                sh "trivy fs.> trivyfs.txt"
+                sh "trivy fs . > trivyfs.txt"
             }
         }
         stage('Build and Publish Docker Image') {
