@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     parameters{
-        choice(name: 'action', choices: ['create', 'delete', 'deploy'], description: 'create/destroy')
+        choice(name: 'action', choices: 'create\ndelete', description: 'Choose create/Destroy')
         string(name: 'DockerHubUser', description: 'name of the docker user', defaultValue: 'hvaksh')
     }
     environment {
