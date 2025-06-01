@@ -42,7 +42,9 @@ pipeline {
         stage('QualityGate Status Check') {
                     when {expression {param.action == 'create'}}
             steps{
-                waitForQualityGate abortPipeline:  false, credentialsId: 'SonarQube-Token'
+                script {
+                    waitForQualityGate abortPipeline:  false, credentialsId: 'SonarQube-Token'
+                }
             }
         }
         stage('Artifactory configuration') {
