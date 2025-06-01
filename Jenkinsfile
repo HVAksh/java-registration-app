@@ -22,7 +22,7 @@ pipeline {
         stage('git checkout') {
                     when {expression {param.action == 'create'}}
             steps{
-                git branch: 'main', url: 'https://github.com/HVAksh/Java_app_3.0.git'
+                git branch: 'main', url: 'https://github.com/HVAksh/java-registration-app.git'
             }
         }
         stage('build, unit test and Integration test') {
