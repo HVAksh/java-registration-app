@@ -13,10 +13,10 @@ pipeline {
     }
     stages{
 
-        stage('Clean Worksapce') {
+        stage('Clean Workspace') {
                     when {expression {param.action == 'create'}}
             steps{
-                sh 'mvn cleanWs'
+                cleanWs()
             }
         }
         stage('git checkout') {
