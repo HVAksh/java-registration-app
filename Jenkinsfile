@@ -54,15 +54,15 @@ pipeline {
                     credentialsId: "jfrog"
                 )
                 rtMavenDeployer (
-                    id: "Maven-Deployer"
-                    serverId: "jfrog-server"
-                    releaseRepo: "libs-release-local"
+                    id: "Maven-Deployer",
+                    serverId: "jfrog-server",
+                    releaseRepo: "libs-release-local",
                     snapshotRepo: "libs-snapshot-local"
                 )
                 rtMavenResolver (
-                    id: "Maven-Resolver"
-                    serverId: "jfrog-server"
-                    releaseRepo: "libs-release"
+                    id: "Maven-Resolver",
+                    serverId: "jfrog-server",
+                    releaseRepo: "libs-release",
                     snapshotRepo: "libs-snapshot"
                 )
             }
