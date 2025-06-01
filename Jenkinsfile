@@ -39,9 +39,10 @@ pipeline {
         stage('Static Code Analysis: SonarQube') {
                     when {expression {params.action == 'create'}}
             steps{
-                withSonarQubeEnv('SonarQube-Server')
-                dir('webapp'){
-                    sh 'mvn -U clean install sonar:sonar'
+                withSonarQubeEnv('SonarQube-Server') {
+                    dir('webapp'){
+                        sh 'mvn -U clean install sonar:sonar'
+                    }
                 }
             }
         }
