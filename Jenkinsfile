@@ -31,7 +31,7 @@ pipeline {
         stage('build, unit test and Integration test') {
                     when {expression {params.action == 'create'}}
             steps{
-                sh 'mvn clean verify -Pintegration-tests'
+                sh 'mvn clean verify -DskipUnitTests'
             }
         }
         stage('Static Code Analysis: SonarQube') {
