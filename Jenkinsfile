@@ -4,7 +4,7 @@ pipeline {
         maven 'maven'
     }
 
-    paramseters{
+    parameters{
         choice(name: 'action', choices: 'create\ndelete', description: 'Choose create/Destroy')
         string(name: 'DockerHubUser', description: 'name of the docker user', defaultValue: 'hvaksh')
     }
