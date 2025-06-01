@@ -96,7 +96,7 @@ pipeline {
         stage('Build and Publish Docker Image') {
                     when {expression {param.action == 'create'}}
             steps{
-                docker.withRegistry ("https://hub.docker.com/", "${params.DockerHubUser}") {
+                docker.withRegistry ('', "${params.DockerHubUser}") {
                     docker_image = docker.build "${IMAGE_NAME}"
                     docker_image.push("${IMAGE_TAG}")
                     docker_image.push("latest")
