@@ -98,6 +98,8 @@ pipeline {
             steps{
                 docker.withRegistry ('', "${params.DockerHubUser}") {
                     docker_image = docker.build "${IMAGE_NAME}"
+                }
+                docker.withRegistry ('', "${params.DockerHubUser}") {
                     docker_image.push("${IMAGE_TAG}")
                     docker_image.push("latest")
                 }
