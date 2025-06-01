@@ -9,7 +9,7 @@ pipeline {
         string(name: 'DockerHubUser', description: 'name of the docker user', defaultValue: 'hvaksh')
     }
     environment {
-        APP_NAME = "javapp"
+        APP_NAME = "java-registration-app"
         RELEASE = "1.0.0"
         IMAGE_NAME = "${params.DockerHubUser}"+"/"+"${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
@@ -22,7 +22,7 @@ pipeline {
                 cleanWs()
             }
         }
-        stage('git checkout') {
+        stage('Checkout from Git') {
                     when {expression {param.action == 'create'}}
             steps{
                 git branch: 'main', url: 'https://github.com/HVAksh/java-registration-app.git'
