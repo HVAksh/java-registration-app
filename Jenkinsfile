@@ -32,7 +32,7 @@ pipeline {
                     when {expression {params.action == 'create'}}
             steps{
                 dir('webapp'){
-                    sh 'mvn clean verify'
+                    sh 'mvn package'
                 }
             }
         }
@@ -41,7 +41,7 @@ pipeline {
             steps{
                 withSonarQubeEnv('SonarQube-Server')
                 dir('webapp'){
-                    sh 'mvn sonar:sonar'
+                    sh 'mvn -U clean install sonar:sonar'
                 }
             }
         }
