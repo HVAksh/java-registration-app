@@ -31,15 +31,18 @@ pipeline {
         stage('build, unit test and Integration test') {
                     when {expression {params.action == 'create'}}
             steps{
-                sh 'mvn clean verify'
+                dir('webapp'){
+                    sh 'mvn clean verify'
+                }
             }
         }
         stage('Static Code Analysis: SonarQube') {
                     when {expression {params.action == 'create'}}
             steps{
                 withSonarQubeEnv('SonarQube-Server')
-                dir('webapp')
-                sh 'mvn sonar:sonar'
+                dir('webapp'){
+                    sh 'mvn sonar:sonar'
+                }
             }
         }
         stage('QualityGate Status Check') {
