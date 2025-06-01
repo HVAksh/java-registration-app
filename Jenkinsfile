@@ -63,13 +63,13 @@ pipeline {
                     credentialsId: "jfrog"
                 )
                 rtMavenDeployer (
-                    id: "MAVEN-DEPLOYER",
+                    id: "MAVEN_DEPLOYER",
                     serverId: "jfrog-server",
                     releaseRepo: "libs-release-local",
                     snapshotRepo: "libs-snapshot-local"
                 )
                 rtMavenResolver (
-                    id: "MAVEN-RESOLVER",
+                    id: "MAVEN_RESOLVER",
                     serverId: "jfrog-server",
                     releaseRepo: "libs-release",
                     snapshotRepo: "libs-snapshot"
@@ -81,8 +81,8 @@ pipeline {
             steps{
                 rtMavenRun (
                     tool: "maven",
-                    pom: "webapp/pom.xml",
-                    goals: "clean install",
+                    pom: 'webapp/pom.xml',
+                    goals: 'clean install',
                     deployerId: "MAVEN_DEPLOYER",
                     resolverId: "MAVEN_RESOLVER"
                 )
