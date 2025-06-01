@@ -32,7 +32,7 @@ pipeline {
                     when {expression {params.action == 'create'}}
             steps{
                 dir('webapp'){
-                    sh 'mvn clean verify -DskipUnitTests'
+                    sh 'mvn clean verify'
                 }
             }
         }
