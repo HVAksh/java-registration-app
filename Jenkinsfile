@@ -4,7 +4,7 @@ pipeline {
         maven 'maven'
     }
 
-    parameters{
+    paramseters{
         choice(name: 'action', choices: 'create\ndelete', description: 'Choose create/Destroy')
         string(name: 'DockerHubUser', description: 'name of the docker user', defaultValue: 'hvaksh')
     }
@@ -17,25 +17,25 @@ pipeline {
     stages{
 
         stage('Clean Workspace') {
-                    when {expression {param.action == 'create'}}
-            steps{
-                cleanWs()
+                    when {expression {params.action == 'create'}}
+                steps{
+                    cleanWs()
             }
         }
         stage('Checkout from Git') {
-                    when {expression {param.action == 'create'}}
+                    when {expression {params.action == 'create'}}
             steps{
                 git branch: 'main', url: 'https://github.com/HVAksh/java-registration-app.git'
             }
         }
         stage('build, unit test and Integration test') {
-                    when {expression {param.action == 'create'}}
+                    when {expression {params.action == 'create'}}
             steps{
                 sh 'mvn clean verify -Pintegration-tests'
             }
         }
         stage('Static Code Analysis: SonarQube') {
-                    when {expression {param.action == 'create'}}
+                    when {expression {params.action == 'create'}}
             steps{
                 withSonarQubeEnv('SonarQube-Server')
                 dir('webapp')
@@ -43,7 +43,7 @@ pipeline {
             }
         }
         stage('QualityGate Status Check') {
-                    when {expression {param.action == 'create'}}
+                    when {expression {params.action == 'create'}}
             steps{
                 script {
                     waitForQualityGate abortPipeline:  false, credentialsId: 'SonarQube-Token'
@@ -51,7 +51,7 @@ pipeline {
             }
         }
         stage('Artifactory configuration') {
-                    when {expression {param.action == 'create'}}
+                    when {expression {params.action == 'create'}}
             steps{
                 rtServer (
                     id: "jfrog-server",
@@ -73,7 +73,7 @@ pipeline {
             }
         }
         stage('Deploy Artifacts') {
-                    when {expression {param.action == 'create'}}
+                    when {expression {params.action == 'create'}}
             steps{
                 rtMavenRun (
                     tool: "maven",
@@ -85,7 +85,7 @@ pipeline {
             }
         }
         stage('Build Publish info') {
-                    when {expression {param.action == 'create'}}
+                    when {expression {params.action == 'create'}}
             steps{
                 rtPublishBuildInfo (
                     serverId: "jfrog-server"
@@ -93,13 +93,13 @@ pipeline {
             }
         }
         stage('Trivy FS scan') {
-                    when {expression {param.action == 'create'}}
+                    when {expression {params.action == 'create'}}
             steps{
                 sh "trivy fs.> trivyfs.txt"
             }
         }
         stage('Build and Publish Docker Image') {
-                    when {expression {param.action == 'create'}}
+                    when {expression {params.action == 'create'}}
             steps{
                 script {
                     docker.withRegistry ("https://hub.docker.com/", "${params.DockerHubUser}") {
@@ -111,7 +111,7 @@ pipeline {
             }
         }
         stage('Trivy Image Scan') {
-                    when {expression {param.action == 'create'}}
+                    when {expression {params.action == 'create'}}
             steps{
                 script {
                     sh """   
@@ -122,7 +122,7 @@ pipeline {
             }
         }
         stage('Clean Artifacts') {
-                    when {expression {param.action == 'create'}}
+                    when {expression {params.action == 'create'}}
             steps{
                 script {
                     sh "docker rmi ${IMAGE_NAME}:${IMAGE_TAG}"
