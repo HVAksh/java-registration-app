@@ -32,7 +32,7 @@ pipeline {
                     when {expression {params.action == 'create'}}
             steps{
                 dir('webapp'){
-                    sh 'mvn clean verify'
+                    sh 'mvn clean verify -Pintegration-tests'
                 }
             }
         }
