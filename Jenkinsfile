@@ -106,35 +106,14 @@ pipeline {
                     when {expression {params.action == 'create'}}
             steps{
                 script {
-                    def fullImageTag = "${env.IMAGE_NAME}:${env.IMAGE_TAG}"
-                    def latestImageTag = "${env.IMAGE_NAME}:latest"
-
-                    withCredentials([usernamePassword(
-                        credentialsId: "docker",
-                        usernameVariable: "USER",
-                        passwordVariable: "PASS"
-                    )]) 
-                        {
-                            sh """
-                                docker image build -t ${fullImageTag}:latest .
-                            """
-                            sh "docker tag ${fullImageTag} ${latestImageTag}"
-                        }                    
-                        {
-                            sh "docker login -u '$USER' -p '$PASS'"
-                        }
-                        {
-                               sh "docker push ${fullImageTag}"
-                               sh "docker push ${latestImageTag}"
-                        }
-                }
-                    // docker.withRegistry ("https://hub.docker.com/", "${params.DockerHubUser}") {
-                    //     docker_image = docker.build "${IMAGE_NAME}"
-                    // }
-                    // docker.withRegistry ("https://hub.docker.com/", "${params.DockerHubUser}") {
-                    //     docker_image.push("${IMAGE_TAG}")
-                    //     docker_image.push("latest")
-                    // }
+                    
+                    docker.withRegistry ('', "${params.DockerHubUser}") {
+                        docker_image = docker.build "${IMAGE_NAME}"
+                    }
+                    docker.withRegistry ('', "${params.DockerHubUser}") {
+                        docker_image.push("${IMAGE_TAG}")
+                        docker_image.push("latest")
+                    }
             }
         }
         stage('Trivy Image Scan') {
