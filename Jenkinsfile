@@ -11,6 +11,7 @@ pipeline {
     environment {
         APP_NAME = "java-registration-app"
         RELEASE = "1.0.0"
+        DOCKER_PASS = 'docker'
         IMAGE_NAME = "${params.DockerHubUser}"+"/"+"${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
     }
@@ -107,10 +108,10 @@ pipeline {
             steps{
                 script {
                     
-                    docker.withRegistry ('', "${params.DockerHubUser}") {
+                    docker.withRegistry ('', "${DOCKER_PASS}") {
                         docker_image = docker.build "${IMAGE_NAME}"
                     }
-                    docker.withRegistry ('', "${params.DockerHubUser}") {
+                    docker.withRegistry ('', "${DOCKER_PASS}") {
                         docker_image.push("${IMAGE_TAG}")
                         docker_image.push("latest")
                     }
