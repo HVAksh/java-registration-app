@@ -111,7 +111,13 @@ pipeline {
                         credentialsId: "docker",
                         usernameVariable: "USER",
                         passwordVariable: "PASS"
-                    )]) {
+                    )]) 
+                        {
+                            sh """
+                                docker image build -t ${params.DockerHubUser}/${APP_NAME}:latest .
+                            """
+                        }                    
+                        {
                             sh "docker login -u '$USER' -p '$PASS'"
                         }
                             sh "docker image push ${params.DockerHubUser}/${APP_NAME}:${IMAGE_TAG}"
