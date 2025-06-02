@@ -106,14 +106,24 @@ pipeline {
                     when {expression {params.action == 'create'}}
             steps{
                 script {
-                    docker.withRegistry ("https://hub.docker.com/", "${params.DockerHubUser}") {
-                        docker_image = docker.build "${IMAGE_NAME}"
-                    }
-                    docker.withRegistry ("https://hub.docker.com/", "${params.DockerHubUser}") {
-                        docker_image.push("${IMAGE_TAG}")
-                        docker_image.push("latest")
-                    }
+
+                    withCredentials([usernamePassword(
+                        credentialsId: "docker",
+                        usernameVariable: "USER",
+                        passwordVariable: "PASS"
+                    )]) {
+                            sh "docker login -u '$USER' -p '$PASS'"
+                        }
+                            sh "docker image push ${params.DockerHubUser}/${APP_NAME}:${IMAGE_TAG}"
+                            sh "docker image push ${params.DockerHubUser}/${APP_NAME}:latest"   
                 }
+                    // docker.withRegistry ("https://hub.docker.com/", "${params.DockerHubUser}") {
+                    //     docker_image = docker.build "${IMAGE_NAME}"
+                    // }
+                    // docker.withRegistry ("https://hub.docker.com/", "${params.DockerHubUser}") {
+                    //     docker_image.push("${IMAGE_TAG}")
+                    //     docker_image.push("latest")
+                    // }
             }
         }
         stage('Trivy Image Scan') {
